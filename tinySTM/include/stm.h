@@ -75,26 +75,22 @@
 #ifndef _STM_H_
 # define _STM_H_
 
-#define STM_MCATS
+#define STM_F2C2
 
-#ifdef STM_MCATS
+#ifdef STM_F2C2
 
 #define INVISIBLE_TRACKING
-#define STM_TUNING
 
+#define STM_TIMER_READ() ({ \
+	unsigned int lo; \
+	unsigned int hi; \
+	__asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi)); \
+	((stm_time_t)hi) << 32 | lo; \
+})
 
-	#define TX_CLASSES 1
+typedef unsigned long long stm_time_t;
 
-	#define STM_TIMER_READ() ({ \
-		unsigned int lo; \
-		unsigned int hi; \
-		__asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi)); \
-		((stm_time_t)hi) << 32 | lo; \
-	})
-
-	typedef unsigned long long stm_time_t;
-
-#endif /* STM_MCATS */
+#endif /* STM_F2C2 */
 
 # include <setjmp.h>
 # include <stdint.h>
@@ -294,22 +290,14 @@ enum {
  * the main thread, before any access to the other functions of the
  * library.
  */
-#  ifdef STM_MCATS
+#  ifdef STM_F2C2
 void stm_init(int threads);
 _CALLCONV struct stm_tx *stm_pre_init_thread(int id);
 void stm_wait(int id);
-void stm_signal();
-void stm_tuning();
-inline void update_conflict_table(int id1, int id2);
-inline int get_main_thread();
-void stm_tuning_one_class();
 #else
 void stm_init();
 void stm_wait(int id);
-void stm_signal();
-void stm_tuning();
-void stm_tuning_one_class();
-#endif /* ! STM_MCATS */
+#endif /* ! STM_F2C2 */
 
 
 /**

@@ -358,26 +358,11 @@ typedef struct stm_tx {                 /* Transaction descriptor */
   unsigned int stat_locked_reads_failed;/* Failed reads of previous value */
 # endif /* READ_LOCKED_DATA */
 #endif /* TM_STATISTICS2 */
-#  ifdef STM_MCATS
-  stm_time_t first_start_tx_time;
-  stm_time_t last_start_tx_time;
-  stm_time_t start_no_tx_time;
-  stm_time_t *total_tx_wasted_per_active_transactions;
-  long *total_tx_committed_per_active_transactions;
-  long *total_conflict_per_active_transactions;
-  stm_time_t *total_tx_useful_per_active_transactions;
-  stm_time_t total_useful_time;
-  stm_time_t total_no_tx_time;
-  stm_time_t total_wasted_time;
-  stm_time_t total_spin_time;
-  int last_k;
-  long committed_transactions_as_a_collector_thread;
-  long committed_transactions;
-  long aborted_transactions;
-  int thread_identifier;
-  int i_am_the_collector_thread;
-  volatile int i_am_waiting;
-#endif /* ! STM_MCATS */
+#  ifdef STM_F2C2
+ volatile int thread_gate;
+ int thread_identifier;
+ int committed_transactions;
+ #endif
 } stm_tx_t;
 
 /* This structure should be ordered by hot and cold variables */
@@ -1095,13 +1080,6 @@ stm_rollback(stm_tx_t *tx, unsigned int reason)
 #else /* ! IRREVOCABLE_ENABLED */
   reason |= STM_PATH_INSTRUMENTED;
 #endif /* ! IRREVOCABLE_ENABLED */
-#ifdef STM_MCATS
-  if(tx->i_am_the_collector_thread){
-	  stm_time_t conflict_time=STM_TIMER_READ();
-	  tx->total_tx_wasted_per_active_transactions[tx->last_k]+=conflict_time - tx->last_start_tx_time;
-	  tx->last_start_tx_time=conflict_time;
-  }
-#endif
   LONGJMP(tx->env, reason);
 }
 
