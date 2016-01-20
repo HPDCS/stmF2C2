@@ -73,17 +73,13 @@ global_t _tinystm =
 #endif /* IRREVOCABLE_ENABLED */
     };
 
-#  ifdef STM_F2C2
-	int tx_per_tuning_cycle;
-	unsigned long max_concurrent_threads;
-	int main_thread;
 
-	long total_commited_txs=0;
-#endif /* ! STM_F2C2 */
 #  ifdef STM_F2C2
   double last_throughput;
   stm_time_t last_tuning_time;
-  long active_threads;
+	int tx_per_tuning_cycle;
+	unsigned int max_concurrent_threads;
+	unsigned int active_threads;
   int direction;
 #endif /* ! STM_F2C2 */
 
@@ -275,8 +271,8 @@ void stm_init(int threads) {
 	tx_per_tuning_cycle = max_tx_per_tuning_cycle;
 	last_tuning_time=0;
 	last_throughput=0;
-	direction=1;
-	main_thread = 0;
+	direction=1; // 1 = direction up, 0 = direction down
+	active_threads=max_concurrent_threads;
 
 
 #else
@@ -445,7 +441,7 @@ inline void stm_wait(int id) {
 inline void stm_tune_scheduler() {
 	TX_GET;
 	stm_time_t now=STM_TIMER_READ();
-	double current_throughput=(double)(tx->committed_transactions*1000000)/((double)(now-last_tuning_time));
+	double current_throughput=(double)active_threads*(double)(tx->committed_transactions*1000000)/((double)(now-last_tuning_time));
 	if (current_throughput < last_throughput) {
 		if (direction == 1)
 			direction = 0;
@@ -462,6 +458,7 @@ inline void stm_tune_scheduler() {
 		while (thread != NULL) {
 			if (thread->thread_gate == 1) {
 				thread->thread_gate = 0;
+				active_threads++;
 				break;
 			}
 			thread = thread->next;
@@ -471,6 +468,7 @@ inline void stm_tune_scheduler() {
 		while (thread != NULL) {
 			if (thread->thread_gate == 0 ) {
 				thread->thread_gate = 1;
+				active_threads--;
 				break;
 			}
 			thread = thread->next;
@@ -480,7 +478,7 @@ inline void stm_tune_scheduler() {
 	//get thread list
 	thread = _tinystm.threads;
 	//go to the next thread
-	printf("\n Committed: %i, Current throughput; %f, last throughput: %f,  gates: ", tx->committed_transactions, current_throughput, last_throughput);
+	printf("\n Committed: %i, Current throughput; %f, last throughput: %f, active_threads: %u  gates: ", tx->committed_transactions, current_throughput, last_throughput, active_threads);
 	while (thread != NULL) {
 		printf("%i ", thread->thread_gate);
 		thread = thread->next;
