@@ -478,6 +478,7 @@ inline void stm_tune_scheduler() {
 			thread = thread->next;
 		}
 	}
+	/*
 	//get thread list
 	thread = _tinystm.threads;
 	//go to the next thread
@@ -486,6 +487,7 @@ inline void stm_tune_scheduler() {
 		printf("%i ", thread->thread_gate);
 		thread = thread->next;
 	}
+	*/
 
 	last_throughput = current_throughput;
 	last_tuning_time = STM_TIMER_READ();
