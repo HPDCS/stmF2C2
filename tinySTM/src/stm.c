@@ -418,8 +418,6 @@ stm_start(stm_tx_attr_t attr)
 _CALLCONV stm_tx_t *
 stm_pre_init_thread(int id){
 
-	printf("\nStm_pre_init_thread: id %i", id);
-
 	stm_tx_t *tx;
 	tx=stm_init_thread();
 
@@ -478,7 +476,7 @@ inline void stm_tune_scheduler() {
 			thread = thread->next;
 		}
 	}
-	/*
+
 	//get thread list
 	thread = _tinystm.threads;
 	//go to the next thread
@@ -487,7 +485,6 @@ inline void stm_tune_scheduler() {
 		printf("%i ", thread->thread_gate);
 		thread = thread->next;
 	}
-	*/
 
 	last_throughput = current_throughput;
 	last_tuning_time = STM_TIMER_READ();
