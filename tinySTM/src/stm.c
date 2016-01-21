@@ -451,12 +451,10 @@ inline void stm_tune_scheduler() {
 
 	//get thread list
 	stm_tx_t *thread = _tinystm.threads;
-	//go to the next thread
-	thread = thread->next;
 	if (direction == 1) {
 		// unlock one thread
 		while (thread != NULL) {
-			if (thread->thread_gate == 1) {
+			if (thread->thread_gate == 1 && tx->thread_identifier!=0) {
 				thread->thread_gate = 0;
 				active_threads++;
 				break;
@@ -466,7 +464,7 @@ inline void stm_tune_scheduler() {
 	} else {
 		// lock one thread
 		while (thread != NULL) {
-			if (thread->thread_gate == 0 ) {
+			if (thread->thread_gate == 0 && tx->thread_identifier==0 ) {
 				thread->thread_gate = 1;
 				active_threads--;
 				break;
@@ -476,7 +474,7 @@ inline void stm_tune_scheduler() {
 		}
 	}
 
-	/*
+
 
 	//get thread list
 	thread = _tinystm.threads;
@@ -486,7 +484,7 @@ inline void stm_tune_scheduler() {
 		printf("%i ", thread->thread_gate);
 		thread = thread->next;
 	}
-	*/
+
 
 	last_throughput = current_throughput;
 	last_tuning_time = STM_TIMER_READ();
