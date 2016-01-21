@@ -399,8 +399,8 @@ void stm_ungate_thread()
 	TX_GET;
 
 	if (tx->thread_identifier==0) {
-		printf("\nThread ungating...");
-		fflush(stdout);
+		//printf("\nThread ungating...");
+		//fflush(stdout);
 		// unlock all threads
 		//get thread list
 		stm_tx_t *thread = _tinystm.threads;
@@ -408,8 +408,8 @@ void stm_ungate_thread()
 			thread->thread_gate = 0;
 			thread = thread->next;
 		}
-		printf("\nUnlocked all threads");
-		fflush(stdout);
+		//printf("\nUnlocked all threads");
+		//fflush(stdout);
 	}
 }
 
@@ -501,7 +501,7 @@ inline void stm_tune_scheduler() {
 	}
 
 
-
+	/*
 	//get thread list
 	thread = _tinystm.threads;
 	//go to the next thread
@@ -510,6 +510,7 @@ inline void stm_tune_scheduler() {
 		printf("%i ", thread->thread_gate);
 		thread = thread->next;
 	}
+	*/
 
 
 	last_throughput = current_throughput;
