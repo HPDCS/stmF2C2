@@ -397,8 +397,8 @@ stm_exit_thread(void)
 void stm_ungate_thread()
 {
 	TX_GET;
-	//printf("thread exit id: %i ", tx->thread_identifier);
-	//fflush(stdout);
+	printf("Ungating thread : %i ", tx->thread_identifier);
+	fflush(stdout);
 
 	//get thread list
 	stm_tx_t *thread = _tinystm.threads;
@@ -408,8 +408,8 @@ void stm_ungate_thread()
 			break;
 		} else thread = thread->next;
 	}
-	//printf("\nUngated");
-	//fflush(stdout);
+	printf("Ungated thread : %i ", tx->thread_identifier);
+	fflush(stdout);
 }
 
 
