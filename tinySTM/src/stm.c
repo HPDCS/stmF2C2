@@ -464,7 +464,7 @@ inline void stm_tune_scheduler() {
 	} else {
 		// lock one thread
 		while (thread != NULL) {
-			if (thread->thread_gate == 0 && tx->thread_identifier==0 ) {
+			if (thread->thread_gate == 0) {
 				thread->thread_gate = 1;
 				active_threads--;
 				break;
