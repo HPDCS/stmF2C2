@@ -14,8 +14,8 @@ while [ $nthread -le $maxThread ]
 	k=0
 	while [ $k -lt $runPerThread ]
 		do
-		echo nice -20 ./kmeans -n2 -q60 -u90 -r32768 -t1048576 -c$nthread 			
-		nice -20 ./kmeans -n2 -q60 -u90 -r32768 -t1048576 -c$nthread >> results_analysis.txt
+		echo nice -20 ./kmeans -m10 -n10 -t0.05 -p$nthread 			
+		nice -20 ./kmeans -m10 -n10 -t0.05 -p$nthread >> results_analysis.txt
 		k=$[$k+1]
 	done
 	nthread=$[$nthread+1]
@@ -29,8 +29,8 @@ while [ $nthread -le $maxThread ]
         k=0
         while [ $k -lt $runPerThread ]
                 do
-                echo nice -20 ./kmeans -n2 -q90 -u98 -r1048576 -t2097152 -c$nthread                       
-                nice -20 ./kmeans -n2 -q90 -u98 -r1048576 -t2097152 -c$nthread >> results_analysis.txt
+                echo nice -20 ./kmeans -m10 -n10 -t0.00005 -p$nthread                       
+                nice -20 ./kmeans -m10 -n10 -t0.00005 -p$nthread >> results_analysis.txt
                 k=$[$k+1]
         done
         nthread=$[$nthread+1]
@@ -44,8 +44,23 @@ while [ $nthread -le $maxThread ]
         k=0
         while [ $k -lt $runPerThread ]
                 do
-                echo nice -20 ./kmeans -n4 -q60 -u90 -r32768 -t524288 -c$nthread                       
-                nice -20 ./kmeans -n4 -q60 -u90 -r32768 -t524288 -c$nthread >> results_analysis.txt
+                echo nice -20 ./kmeans -m5 -n5 -t0.00005 -p$nthread                       
+                nice -20 ./kmeans -m5 -n5 -t0.00005 -p$nthread >> results_analysis.txt
+                k=$[$k+1]
+        done
+        nthread=$[$nthread+1]
+done
+#------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------
+echo kmeans >> results_analysis.txt
+nthread=2
+while [ $nthread -le $maxThread ] 
+        do
+        k=0
+        while [ $k -lt $runPerThread ]
+                do
+                echo nice -20 ./kmeans -m40 -n40 -t0.00005 -p$nthread                       
+                nice -20 ./kmeans -m40 -n40 -t0.00005 -p$nthread >> results_analysis.txt
                 k=$[$k+1]
         done
         nthread=$[$nthread+1]
