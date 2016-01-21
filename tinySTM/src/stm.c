@@ -496,9 +496,6 @@ _CALLCONV stm_tx_t *stm_pre_init_thread(int id){
 	return stm_init_thread();
 }
 
-void stm_wait(int id) {
-
-}
 
 #  endif /* STM_F2C2 */
 
