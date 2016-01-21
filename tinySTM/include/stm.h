@@ -123,6 +123,9 @@ extern "C" {
 # endif
 
 struct stm_tx;
+
+void stm_ungate_thread();
+
 /**
  * Return the current transaction descriptor.
  * The library does not require to pass the current transaction as a

@@ -394,6 +394,27 @@ stm_exit_thread(void)
   int_stm_exit_thread(tx);
 }
 
+void stm_ungate_thread()
+{
+	TX_GET;
+	//printf("thread exit id: %i ", tx->thread_identifier);
+	//fflush(stdout);
+
+	//get thread list
+	stm_tx_t *thread = _tinystm.threads;
+	while (thread != NULL) {
+		if (thread->thread_identifier==tx->thread_identifier) {
+			thread->thread_gate = 0;
+			break;
+		} else thread = thread->next;
+	}
+	//printf("\nUngated");
+	//fflush(stdout);
+}
+
+
+
+
 _CALLCONV void
 stm_exit_thread_tx(stm_tx_t *tx)
 {

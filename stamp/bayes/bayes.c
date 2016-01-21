@@ -271,8 +271,8 @@ MAIN(argc, argv)
      * Generate data
      */
 
-    printf("Generating data... ");
-    fflush(stdout);
+    //printf("Generating data... ");
+    //fflush(stdout);
 
     random_t* randomPtr = random_alloc();
     assert(randomPtr);
@@ -291,8 +291,8 @@ MAIN(argc, argv)
     adtree_t* adtreePtr = adtree_alloc();
     assert(adtreePtr);
 
-    printf("Generating adtree... ");
-    fflush(stdout);
+    //printf("Generating adtree... ");
+    //fflush(stdout);
 
     TIMER_T adtreeStartTime;
     TIMER_READ(adtreeStartTime);
@@ -302,8 +302,8 @@ MAIN(argc, argv)
     TIMER_T adtreeStopTime;
     TIMER_READ(adtreeStopTime);
 
-    puts("done.");
-    fflush(stdout);
+    //puts("done.");
+    //fflush(stdout);
     //printf("Adtree time = %f\n",TIMER_DIFF_SECONDS(adtreeStartTime, adtreeStopTime));
     //fflush(stdout);
 
@@ -322,8 +322,8 @@ MAIN(argc, argv)
     assert(learnerPtr);
     data_free(dataPtr); /* save memory */
 
-    printf("Learning structure...");
-    fflush(stdout);
+    //printf("Learning structure...");
+    //fflush(stdout);
 
     TIMER_T learnStartTime;
     TIMER_READ(learnStartTime);
@@ -335,8 +335,8 @@ MAIN(argc, argv)
     TIMER_T learnStopTime;
     TIMER_READ(learnStopTime);
 
-    puts("done.");
-    fflush(stdout);
+    //puts("done.");
+    //fflush(stdout);
     printf("Threads: %i\tElapsed time: %f", numThread, TIMER_DIFF_SECONDS(learnStartTime, learnStopTime));
     fflush(stdout);
 
@@ -351,7 +351,7 @@ MAIN(argc, argv)
     float learnScore = learner_score(learnerPtr);
     //printf("Learn score  = %f\n", learnScore);
 #endif
-    printf("Actual score = %f\n", actualScore);
+    //printf("Actual score = %f\n", actualScore);
 
     /*
      * Clean up
