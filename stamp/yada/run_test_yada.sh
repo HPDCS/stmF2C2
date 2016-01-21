@@ -58,7 +58,7 @@ while [ $nthread -le $maxThread ]
         while [ $k -lt $runPerThread ]
                 do
                 echo nice -20 ./yada -a15 -i inputs/ttimeu1000000.2 -t$nthread                       
-                nice -20 ./yada -a10 -i inputs/ttimeu1000000.2 -t$nthread >> results_analysis.txt
+                nice -20 ./yada -a15 -i inputs/ttimeu1000000.2 -t$nthread >> results_analysis.txt
                 k=$[$k+1]
         done
         nthread=$[$nthread+1]
