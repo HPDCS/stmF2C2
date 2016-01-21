@@ -14,8 +14,8 @@ while [ $nthread -le $maxThread ]
 	k=0
 	while [ $k -lt $runPerThread ]
 		do
-		echo nice -20 ./kmeans -m10 -n10 -t0.05 -p$nthread 			
-		nice -20 ./kmeans -m10 -n10 -t0.05 -p$nthread >> results_analysis.txt
+		echo nice -20 ./kmeans -m10 -n10 -t0.05 -i inputs/random-n65536-d32-c16.txt -p$nthread 			
+		nice -20 ./kmeans -m10 -n10 -t0.05 -i inputs/random-n65536-d32-c16.txt -p$nthread >> results_analysis.txt
 		k=$[$k+1]
 	done
 	nthread=$[$nthread+1]
@@ -29,8 +29,8 @@ while [ $nthread -le $maxThread ]
         k=0
         while [ $k -lt $runPerThread ]
                 do
-                echo nice -20 ./kmeans -m10 -n10 -t0.00005 -p$nthread                       
-                nice -20 ./kmeans -m10 -n10 -t0.00005 -p$nthread >> results_analysis.txt
+                echo nice -20 ./kmeans -m10 -n10 -t0.00005 -i inputs/random-n65536-d32-c16.txt -p$nthread                       
+                nice -20 ./kmeans -m10 -n10 -t0.00005 -i inputs/random-n65536-d32-c16.txt -p$nthread >> results_analysis.txt
                 k=$[$k+1]
         done
         nthread=$[$nthread+1]
@@ -44,8 +44,8 @@ while [ $nthread -le $maxThread ]
         k=0
         while [ $k -lt $runPerThread ]
                 do
-                echo nice -20 ./kmeans -m5 -n5 -t0.00005 -p$nthread                       
-                nice -20 ./kmeans -m5 -n5 -t0.00005 -p$nthread >> results_analysis.txt
+                echo nice -20 ./kmeans -m5 -n5 -t0.00005 -i inputs/random-n65536-d32-c16.txt -p$nthread                       
+                nice -20 ./kmeans -m5 -n5 -t0.00005 -i inputs/random-n65536-d32-c16.txt -p$nthread >> results_analysis.txt
                 k=$[$k+1]
         done
         nthread=$[$nthread+1]
@@ -59,8 +59,8 @@ while [ $nthread -le $maxThread ]
         k=0
         while [ $k -lt $runPerThread ]
                 do
-                echo nice -20 ./kmeans -m40 -n40 -t0.00005 -p$nthread                       
-                nice -20 ./kmeans -m40 -n40 -t0.00005 -p$nthread >> results_analysis.txt
+                echo nice -20 ./kmeans -m40 -n40 -t0.00005 -i inputs/random-n65536-d32-c16.txt -p$nthread                       
+                nice -20 ./kmeans -m40 -n40 -t0.00005 -i inputs/random-n65536-d32-c16.txt -p$nthread >> results_analysis.txt
                 k=$[$k+1]
         done
         nthread=$[$nthread+1]
