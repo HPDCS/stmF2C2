@@ -271,8 +271,8 @@ MAIN(argc, argv)
      * Generate data
      */
 
-    //printf("Generating data... ");
-    //fflush(stdout);
+    printf("Generating data... ");
+    fflush(stdout);
 
     random_t* randomPtr = random_alloc();
     assert(randomPtr);
