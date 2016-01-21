@@ -386,7 +386,10 @@ stm_exit_thread(void)
 			thread->thread_gate = 0;
 			thread = thread->next;
 		}
+		printf("Unlocked all threads");
+		fflush(stdout);
 	}
+
 
   int_stm_exit_thread(tx);
 }
