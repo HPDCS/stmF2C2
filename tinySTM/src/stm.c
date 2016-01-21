@@ -376,8 +376,8 @@ _CALLCONV void
 stm_exit_thread(void)
 {
 	TX_GET;
-	printf("thread exit id: %i ", tx->thread_identifier);
-	fflush(stdout);
+	//printf("thread exit id: %i ", tx->thread_identifier);
+	//fflush(stdout);
 	if (tx->thread_identifier==0) {
 		// unlock all threads
 		//get thread list
@@ -386,8 +386,8 @@ stm_exit_thread(void)
 			thread->thread_gate = 0;
 			thread = thread->next;
 		}
-		printf("Unlocked all threads");
-		fflush(stdout);
+		//printf("Unlocked all threads");
+		//fflush(stdout);
 	}
 
 
