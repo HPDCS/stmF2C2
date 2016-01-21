@@ -376,7 +376,8 @@ _CALLCONV void
 stm_exit_thread(void)
 {
 	TX_GET;
-
+	printf("thread exit id: %i ", tx->thread_identifier);
+	fflush(stdout);
 	if (tx->thread_identifier==0) {
 		// unlock all threads
 		//get thread list
@@ -519,7 +520,7 @@ stm_commit(void)
 #ifdef STM_F2C2
 	if (tx->thread_identifier==0) {
 		if (tx->committed_transactions==tx_per_tuning_cycle) {
-			//stm_tune_scheduler();
+			stm_tune_scheduler();
 			tx->committed_transactions=0;
 		} else {
 			tx->committed_transactions++;
