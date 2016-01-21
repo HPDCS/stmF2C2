@@ -397,19 +397,20 @@ stm_exit_thread(void)
 void stm_ungate_thread()
 {
 	TX_GET;
-	printf("Ungating thread : %i ", tx->thread_identifier);
-	fflush(stdout);
 
-	//get thread list
-	stm_tx_t *thread = _tinystm.threads;
-	while (thread != NULL) {
-		if (thread->thread_identifier==tx->thread_identifier) {
+	if (tx->thread_identifier==0) {
+		printf("\nThread ungating...");
+		fflush(stdout);
+		// unlock all threads
+		//get thread list
+		stm_tx_t *thread = _tinystm.threads;
+		while (thread != NULL) {
 			thread->thread_gate = 0;
-			break;
-		} else thread = thread->next;
+			thread = thread->next;
+		}
+		printf("\nUnlocked all threads");
+		fflush(stdout);
 	}
-	printf("Ungated thread : %i ", tx->thread_identifier);
-	fflush(stdout);
 }
 
 
