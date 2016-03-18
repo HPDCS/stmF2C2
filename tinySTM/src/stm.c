@@ -464,17 +464,6 @@ _CALLCONV stm_tx_t *stm_pre_init_thread(int id){
 
     set_affinity(id);
 
-
-	char filename[512];
-	int cpu_id=sched_getcpu();
-	sprintf(filename, "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_setspeed",cpu_id);
-	//printf("Filename: %s", filename);
-	tx->scaling_setspeed_fd=open(filename, O_WRONLY);
-    if(tx->scaling_setspeed_fd==-1){
-        printf("\nError opening file %s \n", filename);
-        exit(1);
-    }
-
 	return tx;
 }
 
