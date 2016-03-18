@@ -362,6 +362,21 @@ stm_exit(void)
   tls_exit();
   stm_quiesce_exit();
 
+  char filename[512];
+  int cpu_id=0, fd;
+  for (cpu_id=0; cpu_id<sysconf(_SC_NPROCESSORS_CONF); cpu_id++) {
+	  sprintf(filename, "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_setspeed",cpu_id);
+	  //printf("Filename: %s", filename);
+	  fd=open(filename, O_WRONLY);
+	  if(fd==-1){
+		  printf("Error opening file %s \n", filename);
+		  exit(1);
+	  }
+	  char target_freq[]="800000";
+	  write(fd, &target_freq, sizeof(target_freq));
+	  close(fd);
+  }
+
 #ifdef EPOCH_GC
   gc_exit();
 #endif /* EPOCH_GC */
