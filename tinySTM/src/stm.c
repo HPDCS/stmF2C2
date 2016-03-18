@@ -516,7 +516,7 @@ inline void stm_wait(int id) {
 		}
 	}
 
-	if (scheduling_policy == 1) {
+	if (scheduling_policy == 2) {
 		while (tx->thread_gate) {
 			usleep(1);
 		}
