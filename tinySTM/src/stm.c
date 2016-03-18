@@ -372,6 +372,7 @@ stm_exit(void)
 		  printf("Error opening file %s \n", filename);
 		  exit(1);
 	  }
+
 	  char target_freq[]="800000";
 	  write(fd, &target_freq, sizeof(target_freq));
 	  close(fd);
