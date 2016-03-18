@@ -23,6 +23,10 @@
  * under the terms of the MIT license.
  */
 
+#ifndef __USE_GNU
+#define __USE_GNU
+#endif
+#define _GNU_SOURCE
 #include <assert.h>
 #include <signal.h>
 #include <stdio.h>
