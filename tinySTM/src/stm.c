@@ -437,8 +437,21 @@ stm_start(stm_tx_attr_t attr)
 }
 
 #  ifdef STM_F2C2
-_CALLCONV stm_tx_t *
-stm_pre_init_thread(int id){
+
+int cpu_id[32]={0,4,8,12,16,20,24,28,1,5,9,13,17,21,25,29,2,6,10,14,18,22,26,30,3,7,11,15,19,23,27,31};
+
+
+static inline void set_affinity(int thread_id) {
+	cpu_set_t cpuset;
+	CPU_ZERO(&cpuset);
+	thread_id=thread_id%32;
+	CPU_SET(cpu_id[thread_id], &cpuset);
+	//CPU_SET(thread_id, &cpuset);
+	// 0 is the current thread
+	sched_setaffinity(0, sizeof(cpuset), &cpuset);
+}
+
+_CALLCONV stm_tx_t *stm_pre_init_thread(int id){
 
 	stm_tx_t *tx;
 	tx=stm_init_thread();
@@ -446,6 +459,19 @@ stm_pre_init_thread(int id){
 	tx->thread_identifier=id;
 	tx->thread_gate=0;
 	tx->committed_transactions=0;
+
+    set_affinity(id);
+
+
+	char filename[512];
+	int cpu_id=sched_getcpu();
+	sprintf(filename, "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_setspeed",cpu_id);
+	//printf("Filename: %s", filename);
+	tx->scaling_setspeed_fd=open(filename, O_WRONLY);
+    if(tx->scaling_setspeed_fd==-1){
+        printf("\nError opening file %s \n", filename);
+        exit(1);
+    }
 
 	return tx;
 }
@@ -515,7 +541,7 @@ inline void stm_tune_scheduler() {
 
 	last_throughput = current_throughput;
 	last_tuning_time = STM_TIMER_READ();
-	print("Active_threads %i",active_threads);
+	printf("Active_threads %i",active_threads);
 	fflush(stdout);
 }
 
