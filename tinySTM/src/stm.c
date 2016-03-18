@@ -35,6 +35,8 @@
 #include <fcntl.h>
 
 #include <pthread.h>
+
+
 #include <sched.h>
 
 #include "stm.h"
@@ -84,6 +86,7 @@ global_t _tinystm =
   double last_throughput;
   stm_time_t last_tuning_time;
 	int tx_per_tuning_cycle;
+	int scheduling_policy;
 	unsigned int max_concurrent_threads;
 	unsigned int active_threads;
   int direction;
@@ -269,7 +272,7 @@ void stm_init(int threads) {
 		exit(1);
 	}
 
-	if (fscanf(fid, "TX_PER_CYCLE=%d", &max_tx_per_tuning_cycle)!=1) {
+	if (fscanf(fid, "SCHEDULING_POLICY=%d TX_PER_CYCLE=%d", &scheduling_policy, &max_tx_per_tuning_cycle)!=2) {
 		printf("\nThe number of input parameters of the F2C2 configuration file does not match the number of required parameters.\n");
 		exit(1);
 	}
@@ -468,6 +471,18 @@ _CALLCONV stm_tx_t *stm_pre_init_thread(int id){
 
     set_affinity(id);
 
+	char filename[512];
+	int cpu_id=sched_getcpu();
+	sprintf(filename, "/sys/devices/system/cpu/cpu%i/cpufreq/scaling_setspeed",cpu_id);
+	//printf("Filename: %s", filename);
+	tx->scaling_setspeed_fd=open(filename, O_WRONLY);
+    if(tx->scaling_setspeed_fd==-1){
+        printf("\nError opening file %s \n", filename);
+        exit(1);
+    }
+	char target_freq[]="2000000";
+	write(tx->scaling_setspeed_fd, &target_freq, sizeof(target_freq));
+
 	return tx;
 }
 
@@ -475,11 +490,35 @@ inline void stm_wait(int id) {
 
 	TX_GET;
 
-	int cycle = 1000;
-	int i;
-	while (tx->thread_gate) {
-		for (i = 0; i < cycle; i++) {
-			__asm volatile ("pause" ::: "memory");
+
+	if (scheduling_policy == 1) {
+		int cycles = 100, i;
+		while (tx->thread_gate) {
+			for (i = 0; i < cycles; i++) {
+				__asm volatile ("pause" ::: "memory");
+			}
+		}
+	}
+
+	if (scheduling_policy == 1) {
+		while (tx->thread_gate) {
+			usleep(1);
+		}
+	}
+
+
+	if (scheduling_policy==3) {
+		if (tx->thread_gate) {
+			char target_freq_1[] = "800000";
+			write(tx->scaling_setspeed_fd, &target_freq_1, sizeof(target_freq_1));
+			int cycles = 100, i;
+			while (tx->thread_gate) {
+				for (i = 0; i < cycles; i++) {
+					__asm volatile ("pause" ::: "memory");
+				}
+			}
+			char target_freq_2[] = "2000000";
+			write(tx->scaling_setspeed_fd, &target_freq_2, sizeof(target_freq_2));
 		}
 	}
 }
@@ -536,7 +575,7 @@ inline void stm_tune_scheduler() {
 
 	last_throughput = current_throughput;
 	last_tuning_time = STM_TIMER_READ();
-	printf("\nActive_threads %i",active_threads);
+	//printf("\nActive_threads %i",active_threads);
 	fflush(stdout);
 }
 
@@ -567,12 +606,14 @@ stm_commit(void)
 	ret=int_stm_commit(tx);
 
 #ifdef STM_F2C2
-	if (tx->thread_identifier==0) {
-		if (tx->committed_transactions==tx_per_tuning_cycle) {
-			stm_tune_scheduler();
-			tx->committed_transactions=0;
-		} else {
-			tx->committed_transactions++;
+	if (scheduling_policy>0) {
+		if (tx->thread_identifier==0) {
+			if (tx->committed_transactions==tx_per_tuning_cycle) {
+				stm_tune_scheduler();
+				tx->committed_transactions=0;
+			} else {
+				tx->committed_transactions++;
+			}
 		}
 	}
 #endif
