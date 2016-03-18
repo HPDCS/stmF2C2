@@ -359,10 +359,15 @@ typedef struct stm_tx {                 /* Transaction descriptor */
 # endif /* READ_LOCKED_DATA */
 #endif /* TM_STATISTICS2 */
 #  ifdef STM_F2C2
- volatile int thread_gate;
- int thread_identifier;
- int committed_transactions;
- #endif
+  long committed_transactions;
+  long aborted_transactions;
+  int thread_identifier;
+  volatile int i_am_waiting;
+  volatile scaled;
+  int CAS_executed;
+  int scaling_setspeed_fd;
+  volatile int thread_gate;
+#endif /* ! STM_F2C2 */
 } stm_tx_t;
 
 /* This structure should be ordered by hot and cold variables */
@@ -1080,6 +1085,7 @@ stm_rollback(stm_tx_t *tx, unsigned int reason)
 #else /* ! IRREVOCABLE_ENABLED */
   reason |= STM_PATH_INSTRUMENTED;
 #endif /* ! IRREVOCABLE_ENABLED */
+
   LONGJMP(tx->env, reason);
 }
 

@@ -5,7 +5,7 @@
  *   Pascal Felber <pascal.felber@unine.ch>
  *   Patrick Marlier <patrick.marlier@unine.ch>
  * Description:
- *   STM functions.
+ *   STM functions.stm_init
  *
  * Copyright (c) 2007-2012.
  *
@@ -79,16 +79,16 @@
 
 #ifdef STM_F2C2
 
-#define INVISIBLE_TRACKING
+	#define TX_CLASSES 1
 
-#define STM_TIMER_READ() ({ \
-	unsigned int lo; \
-	unsigned int hi; \
-	__asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi)); \
-	((stm_time_t)hi) << 32 | lo; \
-})
+	#define STM_TIMER_READ() ({ \
+		unsigned int lo; \
+		unsigned int hi; \
+		__asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi)); \
+		((stm_time_t)hi) << 32 | lo; \
+	})
 
-typedef unsigned long long stm_time_t;
+	typedef unsigned long long stm_time_t;
 
 #endif /* STM_F2C2 */
 
@@ -123,9 +123,6 @@ extern "C" {
 # endif
 
 struct stm_tx;
-
-void stm_ungate_thread();
-
 /**
  * Return the current transaction descriptor.
  * The library does not require to pass the current transaction as a
@@ -297,9 +294,16 @@ enum {
 void stm_init(int threads);
 _CALLCONV struct stm_tx *stm_pre_init_thread(int id);
 void stm_wait(int id);
+void stm_signal();
+void stm_tuning();
+inline int get_main_thread();
+void stm_tuning_one_class();
 #else
 void stm_init();
 void stm_wait(int id);
+void stm_signal();
+void stm_tuning();
+void stm_tuning_one_class();
 #endif /* ! STM_F2C2 */
 
 
