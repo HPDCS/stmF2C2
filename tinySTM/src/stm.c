@@ -288,9 +288,10 @@ void stm_init(int threads) {
 	direction=1; // 1 = direction up, 0 = direction down
 	active_threads=max_concurrent_threads;
 
-	key_t sem_key; /* key to pass to semget() */
+	key_t sem_key = 1234; /* key to pass to semget() */
 	int semflg = IPC_CREAT | 0666; /* semflg to pass to semget() */
 	int nsems = threads; /* number of sems to pass to semget() */
+
 
 	if ((semid = semget(sem_key, nsems, semflg)) == -1) {
 		printf("\nSemget failed");
