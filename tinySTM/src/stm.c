@@ -297,7 +297,7 @@ void stm_init(int threads) {
 		printf("\nSemget failed");
 		exit(1);
 	} else {
-		fprintf(stderr, "semget: semget succeeded: semid =\%d\n", semid);
+		//fprintf(stderr, "semget: semget succeeded: semid =\%d\n", semid);
 	}
 
 #else
