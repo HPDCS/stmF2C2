@@ -35,7 +35,9 @@
 #include <fcntl.h>
 
 #include <pthread.h>
-
+ #include <sys/types.h>
+ #include <sys/ipc.h>
+ #include <sys/sem.h>
 
 #include <sched.h>
 
@@ -83,13 +85,16 @@ global_t _tinystm =
 
 
 #  ifdef STM_F2C2
-  double last_throughput;
-  stm_time_t last_tuning_time;
-	int tx_per_tuning_cycle;
-	int scheduling_policy;
-	unsigned int max_concurrent_threads;
-	unsigned int active_threads;
-  int direction;
+double last_throughput;
+stm_time_t last_tuning_time;
+int tx_per_tuning_cycle;
+int scheduling_policy;
+unsigned int max_concurrent_threads;
+unsigned int active_threads;
+int direction;
+int semid; /* semid of semaphore set */
+struct sembuf *waitforzero;
+struct sembuf *settoone;
 #endif /* ! STM_F2C2 */
 
 
@@ -283,6 +288,16 @@ void stm_init(int threads) {
 	direction=1; // 1 = direction up, 0 = direction down
 	active_threads=max_concurrent_threads;
 
+	key_t sem_key; /* key to pass to semget() */
+	int semflg = IPC_CREAT | 0666; /* semflg to pass to semget() */
+	int nsems = threads; /* number of sems to pass to semget() */
+
+	if ((semid = semget(sem_key, nsems, semflg)) == -1) {
+		printf("\nSemget failed");
+		exit(1);
+	} else {
+		fprintf(stderr, "semget: semget succeeded: semid =\%d\n", semid);
+	}
 
 #else
 
@@ -362,6 +377,8 @@ stm_exit(void)
   tls_exit();
   stm_quiesce_exit();
 
+
+ #  ifdef STM_F2C2
   char filename[512];
   int cpu_id=0, fd;
   for (cpu_id=0; cpu_id<sysconf(_SC_NPROCESSORS_CONF); cpu_id++) {
@@ -369,7 +386,7 @@ stm_exit(void)
 	  //printf("Filename: %s", filename);
 	  fd=open(filename, O_WRONLY);
 	  if(fd==-1){
-		  printf("Error opening file %s \n", filename);
+		  printf("\nError opening file %s", filename);
 		  exit(1);
 	  }
 
@@ -377,6 +394,11 @@ stm_exit(void)
 	  write(fd, &target_freq, sizeof(target_freq));
 	  close(fd);
   }
+
+  if (semctl(semid, 0, IPC_RMID) < 0) {
+          printf("\nCould not delete semaphore");
+      }
+#endif /* STM_F2C2 */
 
 #ifdef EPOCH_GC
   gc_exit();
@@ -517,8 +539,14 @@ inline void stm_wait(int id) {
 	}
 
 	if (scheduling_policy == 2) {
-		while (tx->thread_gate) {
-			usleep(1);
+		struct sembuf *sop = (struct sembuf *) malloc(sizeof(struct sembuf));
+		sop[0].sem_num = tx->thread_identifier;
+		sop[0].sem_op = 0; /* wait for semaphore flag to become zero */
+		sop[0].sem_flg = SEM_UNDO; /* take off semaphore asynchronous  */
+
+		if (semop(semid, sop, 1) == -1) {
+			printf("Semop: semop failed");
+			exit(0);
 		}
 	}
 
@@ -540,6 +568,20 @@ inline void stm_wait(int id) {
 }
 
 
+
+
+//struct sembuf *sem_increment = (struct sembuf *) malloc(2*sizeof(struct sembuf));
+//sem_increment[1].sem_num = 0;
+//sem_increment[1].sem_op = 1; /* increment semaphore -- take control of track */
+//sem_increment[1].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
+
+//struct sembuf *sem_decrement = (struct sembuf *) malloc(2*sizeof(struct sembuf));
+//sem_decrement[1].sem_num = 0;
+//sem_decrement[1].sem_op = -1; /* increment semaphore -- take control of track */
+//sem_decrement[1].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
+
+
+
 inline void stm_tune_scheduler() {
 	TX_GET;
 	stm_time_t now=STM_TIMER_READ();
@@ -559,6 +601,17 @@ inline void stm_tune_scheduler() {
 			if (thread->thread_gate == 1 && thread->thread_identifier!=0) {
 				thread->thread_gate = 0;
 				active_threads++;
+				if (scheduling_policy==2) {
+					struct sembuf *sop = (struct sembuf *) malloc(sizeof(struct sembuf));
+					sop[0].sem_num = tx->thread_identifier;
+					sop[0].sem_op = -1; /* decrement semaphore to become zero */
+					sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
+
+					if (semop(semid, sop, 1) == -1) {
+						printf("Semop: semop failed");
+						exit(0);
+					}
+				}
 				break;
 			}
 			thread = thread->next;
@@ -569,6 +622,17 @@ inline void stm_tune_scheduler() {
 			if (thread->thread_gate == 0) {
 				thread->thread_gate = 1;
 				active_threads--;
+				if (scheduling_policy==2) {
+					struct sembuf *sop = (struct sembuf *) malloc(sizeof(struct sembuf));
+					sop[0].sem_num = tx->thread_identifier;
+					sop[0].sem_op = 1; /* increment semaphore to become one */
+					sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
+
+					if (semop(semid, sop, 1) == -1) {
+						printf("Semop: semop failed");
+						exit(0);
+					}
+				}
 				break;
 			}
 			thread = thread->next;
