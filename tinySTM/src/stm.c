@@ -564,7 +564,7 @@ inline void stm_wait(int id) {
 	TX_GET;
 
 	if (scheduling_policy == 1) {
-		int cycles = 10000, i;
+		int cycles = 10, i;
 		while (tx->thread_gate) {
 			for (i = 0; i < cycles; i++) {
 				__asm volatile ("pause" ::: "memory");
@@ -589,7 +589,7 @@ inline void stm_wait(int id) {
 		if (tx->thread_gate) {
 			char target_freq_1[] = "800000";
 			write(tx->scaling_setspeed_fd, &target_freq_1, sizeof(target_freq_1));
-			int cycles = 10000, i;
+			int cycles = 10, i;
 			while (tx->thread_gate) {
 				for (i = 0; i < cycles; i++) {
 					__asm volatile ("pause" ::: "memory");
