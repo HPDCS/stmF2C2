@@ -286,7 +286,8 @@ void stm_init(int threads) {
 	last_tuning_time=0;
 	last_throughput=0;
 	direction=1; // 1 = direction up, 0 = direction down
-	//active_threads= (int)(max_concurrent_threads/2);
+	active_threads= max_concurrent_threads;
+
 
 	key_t sem_key = 1234; /* key to pass to semget() */
 	int semflg = IPC_CREAT | 0666; /* semflg to pass to semget() */
@@ -505,7 +506,25 @@ _CALLCONV stm_tx_t *stm_pre_init_thread(int id){
 	tx=stm_init_thread();
 
 	tx->thread_identifier=id;
-	tx->thread_gate=0;
+	if (tx->thread_identifier<active_threads) {
+		tx->thread_gate=0;
+	} else {
+		tx->thread_gate=1;
+		if (scheduling_policy==2) {
+			struct sembuf *sop = (struct sembuf *) malloc(sizeof(struct sembuf));
+			sop[0].sem_num = tx->thread_identifier;
+			sop[0].sem_op = 1; /* increment semaphore to become one */
+			sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
+
+			if (semop(semid, sop, 1) == -1) {
+				printf("Semop: semop failed");
+				exit(0);
+			}
+		}
+	}
+
+
+
 	tx->committed_transactions=0;
 
     set_affinity(id);
