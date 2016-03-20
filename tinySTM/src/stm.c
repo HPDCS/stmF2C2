@@ -286,7 +286,7 @@ void stm_init(int threads) {
 	last_tuning_time=0;
 	last_throughput=0;
 	direction=1; // 1 = direction up, 0 = direction down
-	//active_threads= (int)(max_concurrent_threads/2);
+	active_threads= (int)(max_concurrent_threads/2);
 
 
 	key_t sem_key = 1234; /* key to pass to semget() */
@@ -731,7 +731,7 @@ stm_commit(void)
 	if (scheduling_policy>0) {
 		if (tx->thread_identifier==0) {
 			if (tx->committed_transactions==tx_per_tuning_cycle) {
-				//stm_tune_scheduler();
+				stm_tune_scheduler();
 				tx->committed_transactions=0;
 			} else {
 				tx->committed_transactions++;
