@@ -439,7 +439,7 @@ stm_exit_thread(void)
 				sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
 
 				if (semop(semid, sop, 1) == -1) {
-					printf("Semop: semop failed");
+					printf("Semop failed on thread %i on thread exit",tx->thread_identifier);
 					exit(0);
 				}
 			}
