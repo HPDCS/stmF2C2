@@ -629,12 +629,12 @@ inline void stm_tune_scheduler() {
 			direction = 1;
 	}
 
-	printf("\n Committed: %i, Current throughput; %f, last throughput: %f, active_threads: %u  gates: ", tx->committed_transactions, current_throughput, last_throughput, active_threads);
+	printf("\n Committed: %i, Current throughput; %f, last throughput: %f, active_threads: %u  \nGates: ", tx->committed_transactions, current_throughput, last_throughput, active_threads);
 	//get thread list
 	stm_tx_t *thread = _tinystm.threads;
 	//go to the next thread
 	while (thread != NULL) {
-		printf("thread %i thread_gate %i ", thread->thread_identifier, thread->thread_gate);
+		printf("\nthread %i thread_gate %i ", thread->thread_identifier, thread->thread_gate);
 		thread = thread->next;
 	}
 
