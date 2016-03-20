@@ -540,7 +540,7 @@ _CALLCONV stm_tx_t *stm_pre_init_thread(int id){
 			}
 		}
 	}
-	printf("\nThread %i thread_gate % i", tx->thread_identifier, tx->thread_gate);
+	//printf("\nThread %i thread_gate % i", tx->thread_identifier, tx->thread_gate);
 
 	tx->committed_transactions=0;
 
@@ -629,14 +629,17 @@ inline void stm_tune_scheduler() {
 			direction = 1;
 	}
 
+	stm_tx_t *thread;
+	/*
 	printf("\n Committed: %i, Current throughput; %f, last throughput: %f, active_threads: %u  \nGates: ", tx->committed_transactions, current_throughput, last_throughput, active_threads);
 	//get thread list
-	stm_tx_t *thread = _tinystm.threads;
+	thread = _tinystm.threads;
 	//go to the next thread
 	while (thread != NULL) {
 		printf("\nthread %i thread_gate %i semval %i", thread->thread_identifier, thread->thread_gate, semctl(semid, thread->thread_identifier, GETVAL, 0));
 		thread = thread->next;
 	}
+	*/
 
 	//get thread list
 	thread = _tinystm.threads;
