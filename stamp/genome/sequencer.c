@@ -301,6 +301,7 @@ sequencer_run (void* argPtr)
         TM_END();
     }
 
+    stm_ungate_thread();
     thread_barrier_wait();
 
     /*
@@ -413,7 +414,7 @@ sequencer_run (void* argPtr)
             assert(status);
         }
     }
-
+    stm_ungate_thread();
     thread_barrier_wait();
 
     /*
@@ -519,7 +520,7 @@ sequencer_run (void* argPtr)
             } /* iterate over chain */
 
         } /* for (endIndex < numUniqueSegment) */
-
+        stm_ungate_thread();
         thread_barrier_wait();
 
         /*
@@ -558,12 +559,12 @@ sequencer_run (void* argPtr)
                 endInfoEntries[j].jumpToNext = i - j;
             }
         }
-
+        stm_ungate_thread();
         thread_barrier_wait();
 
     } /* for (substringLength > 0) */
 
-
+    stm_ungate_thread();
     thread_barrier_wait();
 
     /*
