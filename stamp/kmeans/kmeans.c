@@ -110,9 +110,9 @@
 #include "util.h"
 
 #define MAX_LINE_LENGTH 1000000 /* max input is 400000 one digit input + spaces */
+#define STM_ENERGY_MONITOR
 
 extern double global_time;
-extern float delta_energy;
 
 
 
@@ -288,6 +288,10 @@ MAIN(argc, argv)
     nloops = 1;
     len = max_nclusters - min_nclusters + 1;
 
+#ifdef STM_ENERGY_MONITOR
+	startEnergy();
+#endif /* STM_ENERGY_MONITOR */
+
     for (i = 0; i < nloops; i++) {
         /*
          * Since zscore transform may perform in cluster() which modifies the
@@ -373,8 +377,10 @@ MAIN(argc, argv)
     }
 #endif /* OUTPUT TO_STDOUT */
 
+
 #ifdef STM_ENERGY_MONITOR
-	printf("Threads: %i\tElapsed time: %f Energy: %f",nthreads, global_time, delta_energy);
+    float joule=endEnergy();
+	printf("Threads: %i\tElapsed time: %f Energy: %f",nthreads, global_time, joule);
 #else
 	printf("Threads: %i\tElapsed time: %f", nthreads, global_time);
 #endif /* STM_ENERGY_MONITOR */
