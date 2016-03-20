@@ -655,7 +655,7 @@ inline void stm_tune_scheduler() {
 
 	last_throughput = current_throughput;
 	last_tuning_time = STM_TIMER_READ();
-	//printf("\nActive_threads %i",active_threads);
+	printf("\nActive_threads %i",active_threads);
 	fflush(stdout);
 }
 
