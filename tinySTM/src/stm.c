@@ -286,7 +286,7 @@ void stm_init(int threads) {
 	last_tuning_time=0;
 	last_throughput=0;
 	direction=1; // 1 = direction up, 0 = direction down
-	active_threads= max_concurrent_threads;
+	//active_threads= max_concurrent_threads;
 
 
 	key_t sem_key = 1234; /* key to pass to semget() */
@@ -522,7 +522,7 @@ _CALLCONV stm_tx_t *stm_pre_init_thread(int id){
 			}
 		}
 	}
-	printf("\nThread %i\tgate %i", tx->thread_identifier, tx->thread_gate);
+	printf("\nActive_threads %i\tThread %i\tgate %i", active_threads, tx->thread_identifier, tx->thread_gate);
 
 
 	tx->committed_transactions=0;
