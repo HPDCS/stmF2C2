@@ -291,6 +291,7 @@ MAIN(argc, argv)
 
 #ifdef STM_ENERGY_MONITOR
 	startEnergy();
+    float joule=endEnergy();
 #endif /* STM_ENERGY_MONITOR */
 
     for (i = 0; i < nloops; i++) {
@@ -380,7 +381,6 @@ MAIN(argc, argv)
 
 
 #ifdef STM_ENERGY_MONITOR
-    float joule=endEnergy();
 	printf("Threads: %i\tElapsed time: %f Energy: %f",nthreads, global_time, joule);
 #else
 	printf("Threads: %i\tElapsed time: %f", nthreads, global_time);
