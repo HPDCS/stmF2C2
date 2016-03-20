@@ -529,9 +529,8 @@ inline void stm_wait(int id) {
 
 	TX_GET;
 
-
 	if (scheduling_policy == 1) {
-		int cycles = 100, i;
+		int cycles = 1000, i;
 		while (tx->thread_gate) {
 			for (i = 0; i < cycles; i++) {
 				__asm volatile ("pause" ::: "memory");
