@@ -634,7 +634,7 @@ inline void stm_tune_scheduler() {
 	stm_tx_t *thread = _tinystm.threads;
 	//go to the next thread
 	while (thread != NULL) {
-		printf("\nthread %i thread_gate %i ", thread->thread_identifier, thread->thread_gate);
+		printf("\nthread %i thread_gate %i semval ", thread->thread_identifier, thread->thread_gate, semctl(semid, thread->thread_identifier, GETVAL, 0));
 		thread = thread->next;
 	}
 
@@ -653,7 +653,7 @@ inline void stm_tune_scheduler() {
 					sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
 
 					if (semop(semid, sop, 1) == -1) {
-						printf("Semop decrement failed on thread %i on stm_tune_scheduler",thread->thread_identifier);
+						printf("\nSemop decrement failed on thread %i on stm_tune_scheduler",thread->thread_identifier);
 						exit(0);
 					}
 				}
@@ -674,7 +674,7 @@ inline void stm_tune_scheduler() {
 					sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
 
 					if (semop(semid, sop, 1) == -1) {
-						printf("Semop increment failed on thread %i on stm_tune_scheduler",thread->thread_identifier);
+						printf("\nSemop increment failed on thread %i on stm_tune_scheduler",thread->thread_identifier);
 						exit(0);
 					}
 				}
