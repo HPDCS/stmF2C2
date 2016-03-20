@@ -533,8 +533,9 @@ _CALLCONV stm_tx_t *stm_pre_init_thread(int id){
 			sop[0].sem_op = 1; /* increment semaphore to become one */
 			sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
 
+
 			if (semop(semid, sop, 1) == -1) {
-				printf("Semop: semop failed");
+				printf("Semop failed on thread %i on stm_pre_init_thread",tx->thread_identifier);
 				exit(0);
 			}
 		}
@@ -579,7 +580,7 @@ inline void stm_wait(int id) {
 		sop[0].sem_flg = SEM_UNDO; /* take off semaphore asynchronous  */
 
 		if (semop(semid, sop, 1) == -1) {
-			printf("Semop: semop failed");
+			printf("Semop failed on thread %i on stm_wait",tx->thread_identifier);
 			exit(0);
 		}
 	}
@@ -642,7 +643,7 @@ inline void stm_tune_scheduler() {
 					sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
 
 					if (semop(semid, sop, 1) == -1) {
-						printf("Semop: semop failed");
+						printf("Semop failed on thread %i on stm_tune_scheduler",thread->thread_identifier);
 						exit(0);
 					}
 				}
@@ -663,7 +664,7 @@ inline void stm_tune_scheduler() {
 					sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
 
 					if (semop(semid, sop, 1) == -1) {
-						printf("Semop: semop failed");
+						printf("Semop failed on thread %i on stm_tune_scheduler",thread->thread_identifier);
 						exit(0);
 					}
 				}
