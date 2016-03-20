@@ -522,7 +522,7 @@ _CALLCONV stm_tx_t *stm_pre_init_thread(int id){
 			}
 		}
 	}
-
+	printf("\nThread %i\tgate %i", tx->thread_identifier, tx->thread_gate);
 
 
 	tx->committed_transactions=0;
