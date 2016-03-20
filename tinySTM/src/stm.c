@@ -628,6 +628,7 @@ inline void stm_tune_scheduler() {
 			direction = 1;
 	}
 
+
 	//get thread list
 	stm_tx_t *thread = _tinystm.threads;
 	if (direction == 1) {
@@ -676,7 +677,7 @@ inline void stm_tune_scheduler() {
 	}
 
 
-	/*
+
 	//get thread list
 	thread = _tinystm.threads;
 	//go to the next thread
@@ -685,7 +686,7 @@ inline void stm_tune_scheduler() {
 		printf("%i ", thread->thread_gate);
 		thread = thread->next;
 	}
-	*/
+
 
 
 	last_throughput = current_throughput;
