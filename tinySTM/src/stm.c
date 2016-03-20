@@ -277,7 +277,7 @@ void stm_init(int threads) {
 		exit(1);
 	}
 
-	if (fscanf(fid, "SCHEDULING_POLICY=%d TX_PER_CYCLE=%d", &scheduling_policy, &max_tx_per_tuning_cycle)!=2) {
+	if (fscanf(fid, "SCHEDULING_POLICY=%d TX_PER_CYCLE=%d ACTIVE_THREAD=%d", &scheduling_policy, &max_tx_per_tuning_cycle, &active_threads)!=3) {
 		printf("\nThe number of input parameters of the F2C2 configuration file does not match the number of required parameters.\n");
 		exit(1);
 	}
@@ -286,7 +286,7 @@ void stm_init(int threads) {
 	last_tuning_time=0;
 	last_throughput=0;
 	direction=1; // 1 = direction up, 0 = direction down
-	active_threads= (int)(max_concurrent_threads/2);
+	//active_threads= (int)(max_concurrent_threads/2);
 
 	key_t sem_key = 1234; /* key to pass to semget() */
 	int semflg = IPC_CREAT | 0666; /* semflg to pass to semget() */
@@ -655,7 +655,7 @@ inline void stm_tune_scheduler() {
 
 	last_throughput = current_throughput;
 	last_tuning_time = STM_TIMER_READ();
-	active_threads=5;
+	//printf("\nActive_threads %i",active_threads);
 	fflush(stdout);
 }
 
@@ -689,7 +689,7 @@ stm_commit(void)
 	if (scheduling_policy>0) {
 		if (tx->thread_identifier==0) {
 			if (tx->committed_transactions==tx_per_tuning_cycle) {
-				stm_tune_scheduler();
+				//stm_tune_scheduler();
 				tx->committed_transactions=0;
 			} else {
 				tx->committed_transactions++;
