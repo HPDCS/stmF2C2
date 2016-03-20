@@ -648,7 +648,7 @@ inline void stm_tune_scheduler() {
 				active_threads++;
 				if (scheduling_policy==2) {
 					struct sembuf *sop = (struct sembuf *) malloc(sizeof(struct sembuf));
-					sop[0].sem_num = tx->thread_identifier;
+					sop[0].sem_num = thread->thread_identifier;
 					sop[0].sem_op = -1; /* decrement semaphore to become zero */
 					sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
 
@@ -669,7 +669,7 @@ inline void stm_tune_scheduler() {
 				active_threads--;
 				if (scheduling_policy==2) {
 					struct sembuf *sop = (struct sembuf *) malloc(sizeof(struct sembuf));
-					sop[0].sem_num = tx->thread_identifier;
+					sop[0].sem_num = thread->thread_identifier;
 					sop[0].sem_op = 1; /* increment semaphore to become one */
 					sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
 
