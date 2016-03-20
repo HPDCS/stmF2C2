@@ -286,7 +286,7 @@ void stm_init(int threads) {
 	last_tuning_time=0;
 	last_throughput=0;
 	direction=1; // 1 = direction up, 0 = direction down
-	//active_threads= max_concurrent_threads;
+	active_threads= (int)(max_concurrent_threads/2);
 
 
 	key_t sem_key = 1234; /* key to pass to semget() */
