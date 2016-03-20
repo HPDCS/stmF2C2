@@ -643,7 +643,7 @@ inline void stm_tune_scheduler() {
 					sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
 
 					if (semop(semid, sop, 1) == -1) {
-						printf("Semop failed on thread %i on stm_tune_scheduler",thread->thread_identifier);
+						printf("Semop decrement failed on thread %i on stm_tune_scheduler",thread->thread_identifier);
 						exit(0);
 					}
 				}
@@ -664,7 +664,7 @@ inline void stm_tune_scheduler() {
 					sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
 
 					if (semop(semid, sop, 1) == -1) {
-						printf("Semop failed on thread %i on stm_tune_scheduler",thread->thread_identifier);
+						printf("Semop increment failed on thread %i on stm_tune_scheduler",thread->thread_identifier);
 						exit(0);
 					}
 				}
