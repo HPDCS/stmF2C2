@@ -631,7 +631,7 @@ inline void stm_tune_scheduler() {
 
 	printf("\n Committed: %i, Current throughput; %f, last throughput: %f, active_threads: %u  gates: ", tx->committed_transactions, current_throughput, last_throughput, active_threads);
 	//get thread list
-	thread = _tinystm.threads;
+	stm_tx_t *thread = _tinystm.threads;
 	//go to the next thread
 	while (thread != NULL) {
 		printf("%i ", thread->thread_gate);
@@ -639,7 +639,7 @@ inline void stm_tune_scheduler() {
 	}
 
 	//get thread list
-	stm_tx_t *thread = _tinystm.threads;
+	thread = _tinystm.threads;
 	if (direction == 1) {
 		// unlock one thread
 		while (thread != NULL) {
