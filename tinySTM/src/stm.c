@@ -723,7 +723,7 @@ stm_commit(void)
 	if (scheduling_policy>0) {
 		if (tx->thread_identifier==0) {
 			if (tx->committed_transactions==tx_per_tuning_cycle) {
-				//stm_tune_scheduler();
+				stm_tune_scheduler();
 				tx->committed_transactions=0;
 			} else {
 				tx->committed_transactions++;
