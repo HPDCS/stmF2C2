@@ -432,6 +432,17 @@ stm_exit_thread(void)
 		//get thread list
 		stm_tx_t *thread = _tinystm.threads;
 		while (thread != NULL) {
+			if (scheduling_policy==2 && thread->thread_gate ==1) {
+				struct sembuf *sop = (struct sembuf *) malloc(sizeof(struct sembuf));
+				sop[0].sem_num = tx->thread_identifier;
+				sop[0].sem_op = -1; /* decrement semaphore to become one */
+				sop[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
+
+				if (semop(semid, sop, 1) == -1) {
+					printf("Semop: semop failed");
+					exit(0);
+				}
+			}
 			thread->thread_gate = 0;
 			thread = thread->next;
 		}
@@ -440,7 +451,7 @@ stm_exit_thread(void)
 	}
 
 
-  int_stm_exit_thread(tx);
+	int_stm_exit_thread(tx);
 }
 
 void stm_ungate_thread()
