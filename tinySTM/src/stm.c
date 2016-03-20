@@ -634,7 +634,7 @@ inline void stm_tune_scheduler() {
 	stm_tx_t *thread = _tinystm.threads;
 	//go to the next thread
 	while (thread != NULL) {
-		printf("%i ", thread->thread_gate);
+		printf("thread %i thread_gate %i ", thread->thread_identifier, thread->thread_gate);
 		thread = thread->next;
 	}
 
